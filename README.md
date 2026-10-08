@@ -47,6 +47,8 @@ The custom image installs Confluent's Elasticsearch Sink Connector 16.0.0 into t
 
 The script reads `debezium-connector.json` and `elasticsearch-sink.json` and creates or updates the corresponding connectors. It can be run again after changing either configuration.
 
+Open the interactive workflow dashboard at **http://localhost:3000**. It shows service and connector health, PostgreSQL rows beside their Elasticsearch documents, and recent Kafka messages. Use **Add a row**, **Edit**, or **Delete** to write to PostgreSQL and watch the change propagate. The connector controls can pause and resume either stage to demonstrate where the flow stops. The dashboard is a local teaching interface, not a production administration console.
+
 ## Verify the pipeline
 
 Check that both connectors and their tasks are `RUNNING`:
@@ -72,17 +74,19 @@ To exercise the pipeline, insert, update, or delete a row in PostgreSQL, then qu
 | Apache Kafka | `localhost:9092` | No authentication configured |
 | Kafka Connect REST API | `http://localhost:8083` | No authentication configured |
 | Elasticsearch | `http://localhost:9200` | Security disabled |
+| Wal2Kafka dashboard | `http://localhost:3000` | Localhost only; no login |
 
-These settings are for a local demonstration. Do not expose the services to an untrusted network or reuse the sample database credentials in a real deployment.
+These settings are for a local demonstration. The dashboard has no authentication and can change database rows and connector state. Do not expose it or the other services to an untrusted network, or reuse the sample database credentials in a real deployment.
 
 ## Project files
 
 - `docker-compose.yml` defines PostgreSQL, Kafka in KRaft mode, Kafka Connect, and Elasticsearch.
 - `Dockerfile` adds the Elasticsearch sink plugin to the Debezium Connect image.
-- `postgres/init.sql` creates and seeds the sample `users` table on first database initialization.
+- `postgres/init.sql` creates and seeds the sample `users` table on first database initialization, and enables full replica identity so UPDATE/DELETE events can include the prior row.
 - `debezium-connector.json` configures PostgreSQL WAL capture.
 - `elasticsearch-sink.json` configures event flattening, key extraction, and Elasticsearch deletes.
 - `register-connectors.ps1` registers or updates both connectors through the Kafka Connect REST API.
+- `dashboard/` contains the local web UI and a small API that reads PostgreSQL, Kafka, Kafka Connect, and Elasticsearch, and writes sample row changes to PostgreSQL.
 
 ## Data and cleanup
 

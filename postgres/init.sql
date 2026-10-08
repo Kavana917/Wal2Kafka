@@ -6,6 +6,9 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Include old row values in UPDATE and DELETE CDC events for the demo.
+ALTER TABLE users REPLICA IDENTITY FULL;
+
 INSERT INTO users (name, email, age)
 VALUES
     ('Alice', 'alice@example.com', 21),

@@ -95,6 +95,31 @@ services:
       KEY_CONVERTER_SCHEMAS_ENABLE: "false"
       VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
 
+  dashboard:
+    build:
+      context: ./dashboard
+    container_name: cdc-dashboard
+
+    ports:
+      - "127.0.0.1:3000:3000"
+
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: cdc_demo
+      POSTGRES_USER: cdc_user
+      POSTGRES_PASSWORD: cdc_password
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_TOPIC: wal2kafka.public.users
+      CONNECT_URL: http://kafka-connect:8083
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+
+    depends_on:
+      - postgres
+      - kafka
+      - elasticsearch
+      - kafka-connect
+
 volumes:
   postgres_data:
   elasticsearch_data:

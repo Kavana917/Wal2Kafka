@@ -1,0 +1,19 @@
+{
+    "name": "postgres-cdc",
+    "config": {
+        "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+        "database.hostname": "postgres",
+        "database.port": "5432",
+        "database.user": "cdc_user",
+        "database.password": "cdc_password",
+        "database.dbname": "cdc_demo",
+        "topic.prefix": "wal2kafka",
+        "plugin.name": "pgoutput",
+        "slot.name": "wal2kafka_slot",
+        "publication.name": "wal2kafka_publication",
+        "table.include.list": "public.users",
+        "snapshot.mode": "initial",
+        "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
+        "schema.history.internal.kafka.topic": "schemahistory.wal2kafka"
+    }
+}
